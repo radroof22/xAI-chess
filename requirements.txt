@@ -2,3 +2,5 @@ chess
 numpy
 scipy
 cairosvg
+networkx
+matplotlib
