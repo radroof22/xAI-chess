@@ -1,1 +1,1 @@
-# cs8803-explainable-checkers
+# xAI-chess
