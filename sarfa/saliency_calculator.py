@@ -29,7 +29,11 @@ class SarfaBaseline:
         # final optimal action by max q-value
         optimal_move_original_board: str = max(q_vals_original_board_common, key=q_vals_original_board_common.get)
 
-        q_vals_perturbed_board, _ = self.engine.q_values(perturbed_board, common_actions, runtime=self.runtime)
+        q_vals_perturbed_board, _ = self.engine.q_values(perturbed_board, common_actions, runtime=runtime)
+        
+        # overrride optimal action if provided
+        if (action != None):
+            optimal_move_original_board = action
 
         saliency, _, _, _, _, _ = computeSaliencyUsingSarfa(
             optimal_move_original_board, 
