@@ -36,7 +36,7 @@ class SarfaBaseline:
             optimal_move_original_board = action
 
         saliency, _, _, _, _, _ = computeSaliencyUsingSarfa(
-            optimal_move_original_board, 
+            str(optimal_move_original_board), 
             q_vals_original_board_common, q_vals_perturbed_board)
 
         return saliency

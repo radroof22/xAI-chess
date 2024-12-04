@@ -12,11 +12,12 @@ class SafraBenchmark:
     def __init__(self, saliency_algorithm: Callable[[str], Dict[str, int]]):
         self.dataset = load_dataset()
         self.saliency_algorithm: Callable[[str], Dict[str, int]] = saliency_algorithm
-        self._run_test()
 
         self.ground_truth_array = np.array([])
         self.predicted_values_array = np.array([])
         self.index_to_position_strs = []
+        
+        self._run_test()
 
     def _run_test(self):
         """
@@ -32,8 +33,6 @@ class SafraBenchmark:
 
             # use the ground truth action provided from the dataset
             board = chess.Board(fen)
-            print(fen)
-            print(board)
             action_ground_truth: chess.Move = board.parse_san(self.dataset.get_solution(i)[0])
 
             saliency_predicted: Dict[str, float] = self.saliency_algorithm(fen, action_ground_truth)
@@ -47,8 +46,8 @@ class SafraBenchmark:
             
             ground_truth_array, predicted_values_array, index_to_position_str = self.get_aligned_arrays(saliency_ground_truths, saliency_predicted)
 
-            self.ground_truth_array = np.concatenate(self.ground_truth_array, ground_truth_array)
-            self.predicted_values_array = np.concatenate(self.predicted_values_array, predicted_values_array)
+            self.ground_truth_array = np.concatenate((self.ground_truth_array, ground_truth_array))
+            self.predicted_values_array = np.concatenate((self.predicted_values_array, predicted_values_array))
             self.index_to_position_strs.append(index_to_position_str)
 
     
