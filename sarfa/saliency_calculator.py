@@ -39,6 +39,6 @@ class SarfaBaseline:
             str(optimal_move_original_board), 
             q_vals_original_board_common, q_vals_perturbed_board)
 
-        return saliency
+        return saliency, optimal_move_original_board
 
 
