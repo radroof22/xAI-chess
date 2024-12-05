@@ -42,7 +42,7 @@ def cross_entropy(dictP, dictQ, original_action):
     return 1./(KL + 1.)
 
 
-def computeSaliencyUsingSarfa(original_action, dict_q_vals_before_perturbation, dict_q_vals_after_perturbation, allow_defense_check=False):
+def computeSaliencyUsingSarfa(original_action: str, dict_q_vals_before_perturbation: dict[str, float], dict_q_vals_after_perturbation: dict[str, float], allow_defense_check=False):
     
     answer = 0
 
