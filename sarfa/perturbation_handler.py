@@ -40,6 +40,7 @@ class AddPerturber(Perturber):
     def perturb_position(self, position_str: str) -> chess.Board | None:
         position = get_pos_obj(position_str)
         piece = self.board.piece_at(position)
+        perturbed_board = None
 
         # can add a piece only if the space is empty
         if not piece:
@@ -48,6 +49,5 @@ class AddPerturber(Perturber):
             new_piece = chess.Piece(chess.PAWN, chess.WHITE) if self.board.turn else chess.Piece(chess.PAWN, chess.BLACK)
             perturbed_board.set_piece_at(position, new_piece)
 
-            return perturbed_board
-        else:
-            return
+        return perturbed_board
+        
