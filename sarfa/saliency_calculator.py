@@ -1,6 +1,16 @@
+from dataclasses import dataclass
+
 import chess
 from .engine import Engine
 from .core import computeSaliencyUsingSarfa
+
+EPSILON = 1e-9
+
+@dataclass()
+class SarfaComputeResult:
+    saliency: float
+    dP: float
+    optimal_move: str # on the original board
 
 class SarfaBaseline:
     def __init__(self, engine: Engine, original_board: chess.Board, runtime: float=2.0):
@@ -13,7 +23,24 @@ class SarfaBaseline:
         # calculate the q-values for the original board
         self.q_vals_original_board, _ = self.engine.q_values(self.original_board, self.original_board_actions, runtime=runtime)
 
-    def compute(self, perturbed_board: chess.Board, action: chess.Move | None = None, allow_defense: bool = False) -> tuple[float, str]:
+    def compute(self, perturbed_board: chess.Board, action: chess.Move | None = None, allow_defense: bool = False) -> SarfaComputeResult:
+
+        # BASE CASES
+        # Case 1: Perturbed piece puts it into check
+        if perturbed_board.was_into_check():
+            return SarfaComputeResult(
+                saliency=0,
+                dP=EPSILON,
+                optimal_move=action
+            )
+        
+        # Case 2: if the original move is illegal in this perturbed state
+        if action and not perturbed_board.is_legal(action):
+            return SarfaComputeResult(
+                saliency=1,
+                dP=EPSILON,
+                optimal_move=action
+            )
 
         # action space shared by the original board
         # and the original board
@@ -21,7 +48,11 @@ class SarfaBaseline:
 
         # was the action you ran posssible in these boards
         if action and action not in common_actions or len(common_actions) < 1:
-            return 0, None
+            return SarfaComputeResult(
+                saliency=1,
+                dP=EPSILON,
+                optimal_move=action
+            )
         
         # only keep the keys which are in the common set 
         # of legal actions
@@ -41,10 +72,11 @@ class SarfaBaseline:
             q_vals_original_board_common, q_vals_perturbed_board,
             allow_defense_check=allow_defense)
 
-        if (allow_defense):
-            return saliency, dP, optimal_move_original_board
-
-        return saliency, optimal_move_original_board
+        return SarfaComputeResult(
+            saliency=saliency,
+            dP=dP,
+            optimal_move=optimal_move_original_board
+        )
     
     def compute_q_values(self, perturbed_board: chess.Board) -> tuple[dict[str, float], dict[str, float], str]:
 
