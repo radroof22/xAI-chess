@@ -1,4 +1,6 @@
 import chess
+import networkx as nx
+import matplotlib.pyplot as plt
 
 def get_pos_obj(board_position: str) -> "chess-like-object":
     mapping = {
@@ -76,3 +78,33 @@ def pos_to_index_mapping(pos):
     rows = {'1': 0, '2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6, '8': 7}
     cols = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
     return (rows[pos[1]], cols[pos[0]])
+
+def dfs(curr_node, graph, visited_set):
+    visited_set.add(curr_node)
+    if (curr_node in graph):
+        for neighbor in graph[curr_node]:
+            if (neighbor not in visited_set):
+                dfs(neighbor, graph, visited_set)
+    return
+
+
+def visualize_directed_graph(graph):
+    """
+    Visualize a directed graph
+    """
+
+    G = nx.DiGraph()
+    
+    for node, neighbors in graph.items():
+        for neighbor in neighbors:
+            G.add_edge(node, neighbor)
+    
+    plt.figure(figsize=(4, 4))
+    pos = nx.spring_layout(G) 
+    nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=75, font_size=6, font_weight='bold', edge_color='gray', arrows=True)
+
+    edge_labels = {edge: '' for edge in G.edges}
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='red')
+    
+    plt.title("Directed Graph Visualization")
+    plt.show()

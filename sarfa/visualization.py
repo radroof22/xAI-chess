@@ -174,3 +174,83 @@ class OffenseDefenseBoardVisualization():
         self._draw_saliency_boxes(heatmap, offense_defense_heatmap)
 
         return f"{self.DRAWING_FILE}.png"
+
+class PairsBoardVisualization():
+    DRAWING_FILE = "svg_custom/board"
+    def __init__(self, board: Board):
+        self.board : Board = board
+
+    def only_board(self) -> "displayable":
+        """
+        Displays only the board for of the FEN without
+        any extra visualizations.
+        """
+        return self.board
+
+    def get_heatmap(self, important_groups: list[list[str]]) -> np.array:
+        # Heatmap of saliency icons
+        heatmap = np.zeros((8, 8))
+        heatmap[:, :] = -1
+        for i, group in enumerate(important_groups):
+            for position in group:
+                row, col = pos_to_index_mapping(position)
+                heatmap[row, col] = i
+
+        heatmap = np.flipud(heatmap)
+
+        return heatmap
+
+    def _draw_saliency_boxes(self, heatmap: np.array):
+        # define group colors with RGB
+        colors = [(255, 0, 0), (255, 153, 51), (255, 255, 51), (153, 255, 51), (51, 255, 255), (0,0,255), (127,0,255), (255,0,255), (128, 128, 128)]
+
+        # original board as a numpy array
+        board_array = cv2.imread(f"{self.DRAWING_FILE}.png")
+
+        threshold = 0
+
+        # Create bounding boxes with saliency colours for every square on chess board
+        for i in range(0, 8, 1):
+            for j in range(0, 8, 1):
+                ii = 45*i+20
+                jj = 45*j+20
+                value_of_square =  heatmap[i, j]
+                if value_of_square < threshold:
+                    continue
+                for box_i in range(ii, ii+44, 1):
+                    for box_j in range(jj, jj+44, 1):
+                        if box_i > ii+4 and box_i < ii+40 and box_j > jj+4 and box_j < jj+40:
+                            continue
+
+                        board_array[box_i, box_j, 0] = colors[int(heatmap[i, j])][2]
+                        board_array[box_i, box_j, 1] = colors[int(heatmap[i, j])][1]
+                        board_array[box_i, box_j, 2] = colors[int(heatmap[i, j])][0]
+
+        cv2.imwrite(f"{self.DRAWING_FILE}.png", board_array)
+
+    def show_heatmap(self, important_groups: list[list[str]], best_move: Move) -> str:
+        """
+        Generates heatmap for saliency evaluation of the best move
+
+        Returns path (string) to SVG image with correct drawings.
+
+        ```bash
+        board_path = Visualizer.show_heatmap(...)
+        display(Image(board_path))
+        ```
+        """
+        heatmap = self.get_heatmap(important_groups)
+
+        # draw svg with arrow best_move
+        arrows = []
+        if best_move:
+            arrows = [svg_custom.Arrow(tail =  best_move.from_square, head = best_move.to_square, color = '#e6e600')]
+        svg = svg_custom.board(self.board, arrows = arrows)
+
+        with open(f"{self.DRAWING_FILE}.svg", 'w+') as f:
+            f.write(svg)
+        cairosvg.svg2png(url=f"{self.DRAWING_FILE}.svg", write_to=f"{self.DRAWING_FILE}.png")
+
+        self._draw_saliency_boxes(heatmap)
+
+        return f"{self.DRAWING_FILE}.png"
