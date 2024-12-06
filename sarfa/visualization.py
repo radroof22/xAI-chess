@@ -78,3 +78,99 @@ class BoardVisualization():
         self._draw_saliency_boxes(heatmap)
 
         return f"{self.DRAWING_FILE}.png"
+
+class OffenseDefenseBoardVisualization():
+    DRAWING_FILE = "svg_custom/board"
+    def __init__(self, board: Board):
+        self.board : Board = board
+
+    def only_board(self) -> "displayable":
+        """
+        Displays only the board for of the FEN without
+        any extra visualizations.
+        """
+        return self.board
+
+    def get_heatmap(self, position_to_saliency: dict[str, tuple[str, float]]) -> tuple[np.array, np.array]:
+        # Heatmap of saliency icons
+        heatmap = np.zeros((8, 8))
+        # +1=offense, -1=defense
+        offense_defense_heatmap = np.zeros((8, 8))
+        for position in position_to_saliency:
+            row, col = pos_to_index_mapping(position)
+            heatmap[row, col] = position_to_saliency[position][1]
+            if (position_to_saliency[position][0] == 'defensive'):
+                offense_defense_heatmap[row, col] = -1
+            else:
+                offense_defense_heatmap[row, col] = 1
+
+        heatmap = np.flipud(heatmap)
+        offense_defense_heatmap = np.flipud(offense_defense_heatmap)
+
+        return heatmap, offense_defense_heatmap
+
+    def _draw_saliency_boxes(self, heatmap: np.array, offense_defense_heatmap:np.array):
+        # original board as a numpy array
+        board_array = cv2.imread(f"{self.DRAWING_FILE}.png")
+
+        defensive_threshold = (100/256)*np.max(heatmap[offense_defense_heatmap == -1]) # percentage threshold. Saliency values above this threshold won't be mapped onto board
+        defensive_max = np.max(heatmap[offense_defense_heatmap == -1])
+
+        offensive_threshold = (100/256)*np.max(heatmap[offense_defense_heatmap == 1]) # percentage threshold. Saliency values above this threshold won't be mapped onto board
+        offensive_max = np.max(heatmap[offense_defense_heatmap == 1])
+
+        # Create bounding boxes with saliency colours for every square on chess board
+        for i in range(0, 8, 1):
+            for j in range(0, 8, 1):
+                ii = 45*i+20
+                jj = 45*j+20
+                value_of_square =  heatmap[i, j]
+
+                if (int(offense_defense_heatmap[i, j]) == 1 and value_of_square < offensive_threshold):
+                    continue
+                elif (int(offense_defense_heatmap[i, j]) == -1 and value_of_square < defensive_threshold):
+                    continue
+
+                for box_i in range(ii, ii+44, 1):
+                    for box_j in range(jj, jj+44, 1):
+                        if box_i > ii+4 and box_i < ii+40 and box_j > jj+4 and box_j < jj+40:
+                            continue
+                        # offensive
+                        if (int(offense_defense_heatmap[i, j]) == 1):
+                            board_array[box_i, box_j, 0] = 256 - 0.8*256*heatmap[i, j]/(offensive_max + 1e-10)
+                            board_array[box_i, box_j, 1] = 256 - 0.84*256*heatmap[i, j]/(offensive_max + 1e-10)
+                            board_array[box_i, box_j, 2] = 256 - 0.19*256*heatmap[i, j]/(offensive_max + 1e-10)
+                        elif ((int(offense_defense_heatmap[i, j]) == -1)):
+                            # defensive
+                            board_array[box_i, box_j, 0] = 256 - 0.19*256*heatmap[i, j]/(defensive_max + 1e-10)
+                            board_array[box_i, box_j, 1] = 256 - 0.84*256*heatmap[i, j]/(defensive_max + 1e-10)
+                            board_array[box_i, box_j, 2] = 256 - 0.8*256*heatmap[i, j]/(defensive_max + 1e-10)
+
+        cv2.imwrite(f"{self.DRAWING_FILE}.png", board_array)
+
+    def show_heatmap(self, position_to_saliency: dict[str, tuple[str, float]], best_move: Move) -> str:
+        """
+        Generates heatmap for saliency evaluation of the best move
+
+        Returns path (string) to SVG image with correct drawings.
+
+        ```bash
+        board_path = Visualizer.show_heatmap(...)
+        display(Image(board_path))
+        ```
+        """
+        heatmap, offense_defense_heatmap = self.get_heatmap(position_to_saliency)
+
+        # draw svg with arrow best_move
+        arrows = []
+        if best_move:
+            arrows = [svg_custom.Arrow(tail =  best_move.from_square, head = best_move.to_square, color = '#e6e600')]
+        svg = svg_custom.board(self.board, arrows = arrows)
+
+        with open(f"{self.DRAWING_FILE}.svg", 'w+') as f:
+            f.write(svg)
+        cairosvg.svg2png(url=f"{self.DRAWING_FILE}.svg", write_to=f"{self.DRAWING_FILE}.png")
+
+        self._draw_saliency_boxes(heatmap, offense_defense_heatmap)
+
+        return f"{self.DRAWING_FILE}.png"
