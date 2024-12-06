@@ -3,6 +3,8 @@ from typing import Callable, Dict, List
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 
+import chess
+
 from .dataset import load_dataset
 
 class SafraBenchmark:
@@ -10,6 +12,11 @@ class SafraBenchmark:
     def __init__(self, saliency_algorithm: Callable[[str], Dict[str, int]]):
         self.dataset = load_dataset()
         self.saliency_algorithm: Callable[[str], Dict[str, int]] = saliency_algorithm
+
+        self.ground_truth_array = np.array([])
+        self.predicted_values_array = np.array([])
+        self.index_to_position_strs = []
+        
         self._run_test()
 
     def _run_test(self):
@@ -18,18 +25,34 @@ class SafraBenchmark:
         """
 
         for i in range(len(self.dataset)):
+            # print(i)
+            # if (i == 5):
+            #     break
+
+            if (i + 1) % 10 == 0:
+                print(i)
 
             fen = self.dataset.get_fen(i)
-            saliency_predicted: Dict[str, float] = self.saliency_algorithm(fen)
+
+            # use the ground truth action provided from the dataset
+            board = chess.Board(fen)
+            action_ground_truth: chess.Move = board.parse_san(self.dataset.get_solution(i)[0])
+
+            saliency_predicted: Dict[str, float] = self.saliency_algorithm(fen, action_ground_truth)
 
             saliency_ground_truths: List[str] = self.dataset.get_saliency_ground_truth(i)
 
             # Sanity check
-            for val in saliency_ground_truths:
-                if val not in saliency_predicted:
-                    raise ValueError("There is a saliency value that exists in the dataset ground truth which wasn't tested by the algorithm")
+            for pos in saliency_ground_truths:
+                if pos not in saliency_predicted:
+                    print(f"There is a saliency value that exists in the dataset ground truth which wasn't tested by the  algorithm: \n {fen} with pos: {pos}")
+                    continue
             
-            self.ground_truth_array, self.predicted_values_array, self.index_to_position_str = self.get_aligned_arrays(saliency_ground_truths, saliency_predicted)
+            ground_truth_array, predicted_values_array, index_to_position_str = self.get_aligned_arrays(saliency_ground_truths, saliency_predicted)
+
+            self.ground_truth_array = np.concatenate((self.ground_truth_array, ground_truth_array))
+            self.predicted_values_array = np.concatenate((self.predicted_values_array, predicted_values_array))
+            self.index_to_position_strs.append(index_to_position_str)
 
     
 
@@ -65,6 +88,10 @@ class SafraBenchmark:
         ground_truth_array = np.array(ground_truth_array)
         predicted_values_array = np.array(predicted_values_array)
         
+        # scale the predicted score between 0-1
+        min_val = np.min(predicted_values_array)
+        max_val = np.max(predicted_values_array)
+        predicted_values_array = (predicted_values_array-min_val) / (max_val-min_val)
         return ground_truth_array, predicted_values_array, index_to_position_str
         
 
@@ -76,33 +103,13 @@ class SafraBenchmark:
         Returns:
             dict: A dictionary containing the computed results for harmonic mean, average, geometric mean, and minimum.
         """
-        # Ensure delta_p and K are numpy arrays
-        delta_p = np.abs(self.predicted_values_array - self.ground_truth_array)  # absolute difference
-        K = np.ones_like(self.ground_truth_array)  # K is typically an array of 1s for accuracy comparison
-
-        # Compute harmonic mean: 2 / (1/a + 1/b)
-        harmonic_mean = 2 / (1 / delta_p + 1 / K)
-        harmonic_mean_scalar = np.mean(harmonic_mean)  # Get scalar value by averaging over all values
-
-        # Compute arithmetic (average) mean
-        average_mean = (delta_p + K) / 2
-        average_mean_scalar = np.mean(average_mean)  # Get scalar value by averaging over all values
-
-        # Compute geometric mean
-        # To avoid issues with negative values, make sure all values are non-negative
-        geometric_mean = np.sqrt(delta_p * K)
-        geometric_mean_scalar = np.mean(geometric_mean)  # Get scalar value by averaging over all values
-
-        # Compute minimum
-        minimum = np.minimum(delta_p, K)
-        minimum_scalar = np.mean(minimum)  # Get scalar value by averaging over all values
+        # Ensure using numpy arrays
+        individual_accuracies = 1 - np.abs(self.predicted_values_array - self.ground_truth_array)  # absolute difference
+        harmonic_mean_scalar = np.mean(individual_accuracies)  # Get scalar value by averaging over all values
 
         # Return the results in a dictionary as scalars
         return {
-            'harmonic_mean': harmonic_mean_scalar,
-            'average_mean': average_mean_scalar,
-            'geometric_mean': geometric_mean_scalar,
-            'minimum': minimum_scalar
+            'accuracy - harmonic_mean': harmonic_mean_scalar
         }
 
 

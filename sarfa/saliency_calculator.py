@@ -20,9 +20,9 @@ class SarfaBaseline:
         common_actions: set[chess.Move] = self.original_board_actions & set(perturbed_board.legal_moves)
 
         # was the action you ran posssible in these boards
-        if action and action not in common_actions:
-            return 0
-
+        if action and action not in common_actions or len(common_actions) < 1:
+            return 0, None
+        
         # only keep the keys which are in the common set 
         # of legal actions
         q_vals_original_board_common: dict[str, float] = {move: q_val for move, q_val in self.q_vals_original_board.items() if chess.Move.from_uci(move) in common_actions}
@@ -31,10 +31,15 @@ class SarfaBaseline:
 
         q_vals_perturbed_board, _ = self.engine.q_values(perturbed_board, common_actions, runtime=self.runtime)
 
+        
+        # overrride optimal action if provided
+        if (action != None):
+            optimal_move_original_board = action
+        
         saliency, _, _, _, _, _ = computeSaliencyUsingSarfa(
-            optimal_move_original_board, 
+            str(optimal_move_original_board), 
             q_vals_original_board_common, q_vals_perturbed_board)
 
-        return saliency
+        return saliency, optimal_move_original_board
 
 
