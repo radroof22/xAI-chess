@@ -15,11 +15,6 @@ class RemovalPerturber:
 
         perturbed_board = self.board.copy()
         perturbed_board.remove_piece_at(position)
-
-        # if the perturbation leads to a check
-        # this is an irrelevant comparison so ignore it
-        if perturbed_board.was_into_check():
-            return None
         
         return perturbed_board
         
