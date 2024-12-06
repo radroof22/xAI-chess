@@ -33,6 +33,11 @@ def cross_entropy(dictP, dictQ, original_action):
         if move in dictQ:
             Q_p.append(dictP[move])
             Q_q.append(dictQ[move])
+    
+    # edge case: when only one action is there
+    # cross entropy will just be 0
+    if not Q_p or not Q_q:
+        return 0.0
     # converting Q-values into probability distribution        
     Q_p = your_softmax(np.asarray(Q_p))
     Q_q = your_softmax(np.asarray(Q_q))
@@ -45,6 +50,10 @@ def cross_entropy(dictP, dictQ, original_action):
 def computeSaliencyUsingSarfa(original_action: str, dict_q_vals_before_perturbation: dict[str, float], dict_q_vals_after_perturbation: dict[str, float], allow_defense_check=False):
     
     answer = 0
+
+    if len(dict_q_vals_before_perturbation) == len(dict_q_vals_after_perturbation) and len(dict_q_vals_after_perturbation) == 1:
+        return int(list(dict_q_vals_before_perturbation.keys())[0] != list(dict_q_vals_after_perturbation.keys())[0]), None, None, None, None, None
+
 
     # probability of original move in perturbed state
     # print(dict_q_vals_after_perturbation)

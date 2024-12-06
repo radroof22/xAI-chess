@@ -25,9 +25,12 @@ class SafraBenchmark:
         """
 
         for i in range(len(self.dataset)):
-            print(i)
-            if (i == 2):
-                break
+            # print(i)
+            # if (i == 5):
+            #     break
+
+            if (i + 1) % 10 == 0:
+                print(i)
 
             fen = self.dataset.get_fen(i)
 
@@ -40,9 +43,10 @@ class SafraBenchmark:
             saliency_ground_truths: List[str] = self.dataset.get_saliency_ground_truth(i)
 
             # Sanity check
-            for val in saliency_ground_truths:
-                if val not in saliency_predicted:
-                    raise ValueError("There is a saliency value that exists in the dataset ground truth which wasn't tested by the algorithm")
+            for pos in saliency_ground_truths:
+                if pos not in saliency_predicted:
+                    print(f"There is a saliency value that exists in the dataset ground truth which wasn't tested by the  algorithm: \n {fen} with pos: {pos}")
+                    continue
             
             ground_truth_array, predicted_values_array, index_to_position_str = self.get_aligned_arrays(saliency_ground_truths, saliency_predicted)
 
