@@ -4,6 +4,8 @@ import chess
 from .engine import Engine
 from .core import computeSaliencyUsingSarfa
 
+EPSILON = 1e-9
+
 @dataclass()
 class SarfaComputeResult:
     saliency: float
@@ -28,7 +30,7 @@ class SarfaBaseline:
         if perturbed_board.was_into_check():
             return SarfaComputeResult(
                 saliency=0,
-                dP=0,
+                dP=EPSILON,
                 optimal_move=action
             )
         
@@ -36,7 +38,7 @@ class SarfaBaseline:
         if action and not perturbed_board.is_legal(action):
             return SarfaComputeResult(
                 saliency=1,
-                dP=0,
+                dP=EPSILON,
                 optimal_move=action
             )
 
@@ -48,7 +50,7 @@ class SarfaBaseline:
         if action and action not in common_actions or len(common_actions) < 1:
             return SarfaComputeResult(
                 saliency=1,
-                dP=0,
+                dP=EPSILON,
                 optimal_move=action
             )
         
