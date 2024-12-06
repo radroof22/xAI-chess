@@ -13,7 +13,7 @@ class SarfaBaseline:
         # calculate the q-values for the original board
         self.q_vals_original_board, _ = self.engine.q_values(self.original_board, self.original_board_actions, runtime=runtime)
 
-    def compute(self, perturbed_board: chess.Board, action: chess.Move | None = None) -> float:
+    def compute(self, perturbed_board: chess.Board, action: chess.Move | None = None, allow_defense: bool = False) -> tuple[float, str]:
 
         # action space shared by the original board
         # and the original board
@@ -34,11 +34,15 @@ class SarfaBaseline:
         
         # overrride optimal action if provided
         if (action != None):
-            optimal_move_original_board = action
+            optimal_move_original_board = str(action)
         
-        saliency, _, _, _, _, _ = computeSaliencyUsingSarfa(
-            str(optimal_move_original_board), 
-            q_vals_original_board_common, q_vals_perturbed_board)
+        saliency, dP, _, _, _, _ = computeSaliencyUsingSarfa(
+            optimal_move_original_board, 
+            q_vals_original_board_common, q_vals_perturbed_board,
+            allow_defense_check=allow_defense)
+
+        if (allow_defense):
+            return saliency, dP, optimal_move_original_board
 
         return saliency, optimal_move_original_board
 
