@@ -45,5 +45,21 @@ class SarfaBaseline:
             return saliency, dP, optimal_move_original_board
 
         return saliency, optimal_move_original_board
+    
+    def compute_q_values(self, perturbed_board: chess.Board) -> tuple[dict[str, float], dict[str, float], str]:
+
+        # action space shared by the original board
+        # and the original board
+        common_actions: set[chess.Move] = self.original_board_actions & set(perturbed_board.legal_moves)
+        
+        # only keep the keys which are in the common set 
+        # of legal actions
+        q_vals_original_board_common: dict[str, float] = {move: q_val for move, q_val in self.q_vals_original_board.items() if chess.Move.from_uci(move) in common_actions}
+        # final optimal action by max q-value
+        optimal_move_original_board: str = max(q_vals_original_board_common, key=q_vals_original_board_common.get)
+
+        q_vals_perturbed_board, _ = self.engine.q_values(perturbed_board, common_actions, runtime=self.runtime)
+
+        return q_vals_original_board_common, q_vals_perturbed_board, optimal_move_original_board
 
 
