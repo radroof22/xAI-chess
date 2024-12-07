@@ -1,4 +1,5 @@
 from typing import Callable, Dict, List
+import pickle
 
 import numpy as np
 from sklearn.metrics import roc_curve, auc
@@ -9,7 +10,7 @@ from .dataset import load_dataset
 
 class SafraBenchmark:
 
-    def __init__(self, saliency_algorithm: Callable[[str], Dict[str, int]], sanity_check=True):
+    def __init__(self, saliency_algorithm: Callable[[str], Dict[str, int]], name: str, sanity_check=True):
         self.dataset = load_dataset()
         self.saliency_algorithm: Callable[[str], Dict[str, int]] = saliency_algorithm
 
@@ -18,6 +19,13 @@ class SafraBenchmark:
         self.index_to_position_strs = []
         
         self._run_test(sanity_check=sanity_check)
+
+        # save the generated values
+        # Save to file
+        with open(f"output/{name}.pkl", "wb") as f:
+            pickle.dump(
+                (self.predicted_values_array, self.ground_truth_array, self.index_to_position_strs)
+                , f)
 
     def _run_test(self, sanity_check=False):
         """
