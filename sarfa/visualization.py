@@ -49,8 +49,11 @@ class BoardVisualization():
         # original board as a numpy array
         board_array = cv2.imread(f"{self.DRAWING_FILE}.png")
         self._add_labels(board_array)
+        if not heatmap.any():
+            cv2.imwrite(f"{self.DRAWING_FILE}.png", board_array)
+            return
 
-        threshold = (100/256)*np.max(heatmap) # percentage threshold. Saliency values above this threshold won't be mapped onto board
+        threshold = (10/256)*np.max(heatmap) # percentage threshold. Saliency values above this threshold won't be mapped onto board
 
         # Create bounding boxes with saliency colours for every square on chess board
         for i in range(0, 8, 1):
