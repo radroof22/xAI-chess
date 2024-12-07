@@ -3,6 +3,7 @@ import pickle
 
 import numpy as np
 from sklearn.metrics import roc_curve, auc
+import matplotlib.pyplot as plt
 
 import chess
 
@@ -10,7 +11,7 @@ from .dataset import load_dataset
 
 class SafraBenchmark:
 
-    def __init__(self, saliency_algorithm: Callable[[str], Dict[str, int]], name: str, sanity_check=True):
+    def __init__(self, saliency_algorithm: Callable[[str], Dict[str, int]]):
         self.dataset = load_dataset()
         self.saliency_algorithm: Callable[[str], Dict[str, int]] = saliency_algorithm
 
@@ -18,14 +19,36 @@ class SafraBenchmark:
         self.predicted_values_array = np.array([])
         self.index_to_position_strs = []
         
-        self._run_test(sanity_check=sanity_check)
+    @classmethod
+    def load_results(cls, saliency_algorithm: Callable[[str], Dict[str, int]], name: str):
+        with open(f"output_test/{name}.pkl", "rb") as f:
+            loaded_data = pickle.load(f)
+
+        predicted_values_array, ground_truth_array, index_to_position_strs = loaded_data
+        instance = cls(saliency_algorithm)
+
+        instance.predicted_values_array = predicted_values_array
+        instance.ground_truth_array = ground_truth_array
+        instance.index_to_position_strs = index_to_position_strs
+
+        return instance
+
+    @classmethod
+    def run(cls, saliency_algorithm: Callable[[str], Dict[str, int]], name: str, sanity_check = False):
+        instance = cls(saliency_algorithm)
+
+        instance._run_test(sanity_check=sanity_check)
 
         # save the generated values
         # Save to file
-        with open(f"output/{name}.pkl", "wb") as f:
+        if sanity_check:
+            name += ".sanity"
+        with open(f"output_test/{name}.pkl", "wb") as f:
             pickle.dump(
-                (self.predicted_values_array, self.ground_truth_array, self.index_to_position_strs)
+                (instance.predicted_values_array, instance.ground_truth_array, instance.index_to_position_strs)
                 , f)
+
+        return instance
 
     def _run_test(self, sanity_check=False):
         """
@@ -127,3 +150,18 @@ class SafraBenchmark:
         fpr, tpr, thresholds = roc_curve(self.ground_truth_array, self.predicted_values_array)
 
         return fpr, tpr
+
+    def plot_roc(self, name="ROC Curve"):
+        fpr, tpr = self.roc_curve()
+        roc_auc = auc(fpr, tpr)
+
+        fig, ax = plt.subplots(figsize=(8, 6))
+        ax.plot(fpr, tpr, color='blue', lw=2, label=f'ROC curve (area = {roc_auc:.2f})')
+        ax.plot([0, 1], [0, 1], color='gray', linestyle='--')  # Random classifier line (diagonal)
+        ax.set_xlabel('False Positive Rate')
+        ax.set_ylabel('True Positive Rate')
+        ax.set_title(name)
+        ax.legend(loc='lower right')
+        ax.grid(True)
+        plt.close(fig)
+        return fig
