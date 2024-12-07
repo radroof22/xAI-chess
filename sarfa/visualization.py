@@ -29,9 +29,26 @@ class BoardVisualization():
 
         return heatmap
 
+    def _add_labels(self, board_array: np.array):
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        font_scale = 0.5
+        thickness = 1
+        color = (255, 255, 255)  # White text
+
+        # Add column labels (a to h) towards the center of each square
+        for j, label in enumerate("abcdefgh"):
+            position = (45 * j + 37, 395)  # Adjusted to center the label in the square
+            cv2.putText(board_array, label, position, font, font_scale, color, thickness)
+
+        # Add row labels (1 to 8) slightly lower than before
+        for i, label in enumerate("87654321"):
+            position = (5, 45 * i + 47)  # Slightly lower text for rows
+            cv2.putText(board_array, label, position, font, font_scale, color, thickness)
+
     def _draw_saliency_boxes(self, heatmap: np.array):
         # original board as a numpy array
         board_array = cv2.imread(f"{self.DRAWING_FILE}.png")
+        self._add_labels(board_array)
 
         threshold = (100/256)*np.max(heatmap) # percentage threshold. Saliency values above this threshold won't be mapped onto board
 
