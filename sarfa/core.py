@@ -48,9 +48,8 @@ def cross_entropy(dictP, dictQ, original_action):
 
 
 def computeSaliencyUsingSarfa(original_action: str, dict_q_vals_before_perturbation: dict[str, float], dict_q_vals_after_perturbation: dict[str, float], allow_defense_check=False):
-    
     answer = 0
-
+    
     if len(dict_q_vals_before_perturbation) == len(dict_q_vals_after_perturbation) and len(dict_q_vals_after_perturbation) == 1:
         return int(list(dict_q_vals_before_perturbation.keys())[0] != list(dict_q_vals_after_perturbation.keys())[0]), None, None, None, None, None
 
