@@ -1,4 +1,5 @@
 from typing import Callable, Dict, List
+import pickle
 
 import numpy as np
 from sklearn.metrics import roc_curve, auc
@@ -20,7 +21,11 @@ class SafraBenchmark:
         self._run_test(sanity_check=sanity_check)
 
         # save the generated values
-        np.save(f"output/{name}.npy", self.predicted_values_array)
+        # Save to file
+        with open(f"output/{name}.pkl", "wb") as f:
+            pickle.dump(
+                (self.predicted_values_array, self.ground_truth_array, self.index_to_position_strs)
+                , f)
 
     def _run_test(self, sanity_check=False):
         """
