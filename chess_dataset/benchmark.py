@@ -9,7 +9,7 @@ from .dataset import load_dataset
 
 class SafraBenchmark:
 
-    def __init__(self, saliency_algorithm: Callable[[str], Dict[str, int]]):
+    def __init__(self, saliency_algorithm: Callable[[str], Dict[str, int]], sanity_check=True):
         self.dataset = load_dataset()
         self.saliency_algorithm: Callable[[str], Dict[str, int]] = saliency_algorithm
 
@@ -17,17 +17,17 @@ class SafraBenchmark:
         self.predicted_values_array = np.array([])
         self.index_to_position_strs = []
         
-        self._run_test()
+        self._run_test(sanity_check=sanity_check)
 
-    def _run_test(self):
+    def _run_test(self, sanity_check=False):
         """
         Takes the saliency_algorithm and runs it on the test dataset 
         """
 
         for i in range(len(self.dataset)):
             # print(i)
-            # if (i == 5):
-            #     break
+            if sanity_check and i == 5:
+                break
 
             if (i + 1) % 10 == 0:
                 print(i)

@@ -11,6 +11,7 @@ class SarfaComputeResult:
     saliency: float
     dP: float
     optimal_move: str # on the original board
+    optimal_move_q_val: float
 
 class SarfaBaseline:
     def __init__(self, engine: Engine, original_board: chess.Board, runtime: float=2.0):
@@ -31,7 +32,8 @@ class SarfaBaseline:
             return SarfaComputeResult(
                 saliency=0,
                 dP=EPSILON,
-                optimal_move=action
+                optimal_move=action,
+                optimal_move_q_val=float("inf")
             )
         
         # Case 2: if the original move is illegal in this perturbed state
@@ -39,7 +41,8 @@ class SarfaBaseline:
             return SarfaComputeResult(
                 saliency=1,
                 dP=EPSILON,
-                optimal_move=action
+                optimal_move=action,
+                optimal_move_q_val=0
             )
 
         # action space shared by the original board
@@ -51,7 +54,8 @@ class SarfaBaseline:
             return SarfaComputeResult(
                 saliency=1,
                 dP=EPSILON,
-                optimal_move=action
+                optimal_move=action,
+                optimal_move_q_val=0
             )
         
         # only keep the keys which are in the common set 
@@ -75,7 +79,8 @@ class SarfaBaseline:
         return SarfaComputeResult(
             saliency=saliency,
             dP=dP,
-            optimal_move=optimal_move_original_board
+            optimal_move=optimal_move_original_board,
+            optimal_move_q_val = max(q_vals_original_board_common.values())
         )
     
     def compute_q_values(self, perturbed_board: chess.Board) -> tuple[dict[str, float], dict[str, float], str]:

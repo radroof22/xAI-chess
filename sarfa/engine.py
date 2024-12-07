@@ -15,11 +15,10 @@ class Engine:
         """
         Compute the q-values Q(s,a) for a given board
         """
-
-        options = self.chess_engine.analyse(board, chess.engine.Limit(time=runtime), multipv=multipv)
         
-        score_per_move = defaultdict(int)
-
+        options = self.chess_engine.analyse(board, chess.engine.Limit(time=runtime), multipv=len(candidate_actions))
+        score_per_move = defaultdict(lambda: float("-inf"))
+        
         for option in options:
             is_white_move = option['score'].turn
             score = option['score'].white() if is_white_move else option['score'].black()
@@ -31,17 +30,6 @@ class Engine:
                 score = round(score.cp/100.0, 2)
             
             score_per_move[curr_action] = score
-
-        q_vals = {}
-        optimal_action = None
-        best_q_val = float('-inf')
-        for valid_move in candidate_actions:
-            q_vals[str(valid_move)] = score_per_move[str(valid_move)]
-
-            # track the optimal action according
-            # to the max Q-value
-            if q_vals[str(valid_move)] > best_q_val:
-                best_q_val = q_vals[str(valid_move)]
-                optimal_action = str(valid_move)
+        optimal_action: str = max(score_per_move, key=score_per_move.get)
             
-        return q_vals, optimal_action
+        return dict(score_per_move), optimal_action
