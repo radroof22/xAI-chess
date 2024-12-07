@@ -21,7 +21,7 @@ class SafraBenchmark:
         
     @classmethod
     def load_results(cls, saliency_algorithm: Callable[[str], Dict[str, int]], name: str):
-        with open(f"output_test/{name}.pkl", "rb") as f:
+        with open(f"output/{name}.pkl", "rb") as f:
             loaded_data = pickle.load(f)
 
         predicted_values_array, ground_truth_array, index_to_position_strs = loaded_data
@@ -43,7 +43,7 @@ class SafraBenchmark:
         # Save to file
         if sanity_check:
             name += ".sanity"
-        with open(f"output_test/{name}.pkl", "wb") as f:
+        with open(f"output/{name}.pkl", "wb") as f:
             pickle.dump(
                 (instance.predicted_values_array, instance.ground_truth_array, instance.index_to_position_strs)
                 , f)
