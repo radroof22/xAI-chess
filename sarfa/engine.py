@@ -11,7 +11,7 @@ class Engine:
         self.engine_path = engine_path
         self.chess_engine = chess.engine.SimpleEngine.popen_uci(self.engine_path)
 
-    def q_values(self, board, candidate_actions, multipv=3, runtime=5.0) -> tuple[dict[str, float], str]:
+    def q_values(self, board, candidate_actions, multipv=100, runtime=5.0) -> tuple[dict[str, float], str]:
         """
         Compute the q-values Q(s,a) for a given board
         """
