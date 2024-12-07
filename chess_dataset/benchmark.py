@@ -33,6 +33,7 @@ class SafraBenchmark:
                 print(i)
 
             fen = self.dataset.get_fen(i)
+            print(fen)
 
             # use the ground truth action provided from the dataset
             board = chess.Board(fen)

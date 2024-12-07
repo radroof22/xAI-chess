@@ -49,6 +49,10 @@ class SarfaBaseline:
         # and the original board
         common_actions: set[chess.Move] = self.original_board_actions & set(perturbed_board.legal_moves)
 
+        print(f"perturbed board legal moves: {len(list(perturbed_board.legal_moves))}")
+        if len(list(perturbed_board.legal_moves)) < 10:
+            print(f"{list(perturbed_board.legal_moves)}")
+
         # was the action you ran posssible in these boards
         if action and action not in common_actions or len(common_actions) < 1:
             return SarfaComputeResult(
@@ -70,7 +74,10 @@ class SarfaBaseline:
         # overrride optimal action if provided
         if (action != None):
             optimal_move_original_board = str(action)
-        
+        print(optimal_move_original_board)
+        print(common_actions)
+        print(f"before: {q_vals_original_board_common}")
+        print(f"after: {q_vals_perturbed_board}")
         saliency, dP, _, _, _, _ = computeSaliencyUsingSarfa(
             optimal_move_original_board, 
             q_vals_original_board_common, q_vals_perturbed_board,

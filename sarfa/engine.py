@@ -18,7 +18,7 @@ class Engine:
         
         options = self.chess_engine.analyse(board, chess.engine.Limit(time=runtime), multipv=len(candidate_actions))
         score_per_move = defaultdict(lambda: float("-inf"))
-        
+        print("Generated " + str(len(options)))
         for option in options:
             is_white_move = option['score'].turn
             score = option['score'].white() if is_white_move else option['score'].black()
