@@ -4,3 +4,5 @@ scipy
 cairosvg
 networkx
 matplotlib
+scikit-learn
+opencv-python
