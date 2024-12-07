@@ -1,7 +1,7 @@
 from chess import Board, Move
 import numpy as np
 import cv2
-from utils import pos_to_index_mapping
+from .utils import pos_to_index_mapping
 import svg_custom.svg_custom as svg_custom 
 import cairosvg
 

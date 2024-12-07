@@ -108,3 +108,12 @@ def visualize_directed_graph(graph):
     
     plt.title("Directed Graph Visualization")
     plt.show()
+
+
+def read_fens(file_path):
+    """
+    Return list of FENs stored in file
+    """
+    with open(file_path, 'r') as file:
+        fens = [line.strip() for line in file if line.strip()]
+    return fens 
