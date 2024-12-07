@@ -1,10 +1,10 @@
 # xAI-chess
 # Overview
 This repository consists of several experiments to explore the realm of explainability for deep reinforcement learning (DRL) models. Specifically, we use chess environments to be able to effectively explain a model's underlying thought process and reasoning. We present 4 novel methods that attempt to explore different avenues of explainability:<br>
-(1) Extend the SARFA framework to evaluate the importance of feature absences through additive perturbations. <br>
-(2) Extend the SARFA framework to identify offensive versus defensively salient features in adversarial environments.<br>
-(3) Use a novel technique called Sequential SARFA, which uses temporal perturbations on top of naive SARFA, to improve performance.<br>
-(4) A novel framework called Pairwise Importance for RL Sensitivity or PaIRS for highlighting important groups of features to explain RL decision-making and potential strategies.<br>
+**(1)** Extend the SARFA framework to evaluate the importance of feature absences through additive perturbations. <br>
+**(2)** Extend the SARFA framework to identify offensive versus defensively salient features in adversarial environments.<br>
+**(3)** Use a novel technique called Sequential SARFA, which uses temporal perturbations on top of naive SARFA, to improve performance.<br>
+**(4)** A novel framework called Pairwise Importance for RL Sensitivity or PaIRS for highlighting important groups of features to explain RL decision-making and potential strategies.<br>
 
 Please look at our paper for more details: __Add Link to Paper__
 
