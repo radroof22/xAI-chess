@@ -26,5 +26,11 @@ You will need to install a conda environment with all the required packages. Ple
 
 - For experiment 1, please run sarfa_empty_spaces.ipynb notebook
 - For experiment 2, please run sarfa_offense_defense.ipynb notebook
-- for experiment 3, please run the sarfa_baseline.ipynb notebook and **add notebook name for sequential**
+- for experiment 3, please run the sarfa_baseline.ipynb notebook and sequential_sarfa.ipynb
 - for experiment 4, please run the pairs_groups.ipynb notebook
+
+# Folders
+- `chess_dataset/` contains the dataset itself (`chess_saliency_dataset_v1.json`) and code for loading the dataset and running benchmarks
+- `pair_results/` contains experimental qualitative results for the PaIRS algorithm
+- `sarfa/` contains classes and methods for the baseline SARFA implementation. It also includes visualization functions for understanding the output
+- `test_fens/` contains curated dataset of FENS (special chess notation for describing a board) used for testing experiments 1,2, and 4
