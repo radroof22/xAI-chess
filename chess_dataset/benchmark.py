@@ -127,7 +127,7 @@ class SarfaBenchmark:
         return ground_truth_array, predicted_values_array, index_to_position_str
         
 
-    def accuracy(self):
+    def accuracy(self) -> float:
         """
         This function compares different ways to combine two sets of values, delta_p and K,
         and calculates the harmonic mean, arithmetic mean, geometric mean, and minimum as scalars.
@@ -140,9 +140,7 @@ class SarfaBenchmark:
         harmonic_mean_scalar = np.mean(individual_accuracies)  # Get scalar value by averaging over all values
 
         # Return the results in a dictionary as scalars
-        return {
-            'accuracy - harmonic_mean': harmonic_mean_scalar
-        }
+        return harmonic_mean_scalar
 
 
     
