@@ -1,4 +1,4 @@
-from .visualization import BoardVisualization, OffenseDefenseBoardVisualization, PairsBoardVisualization
+from .visualization import BoardVisualization, OffenseDefenseBoardVisualization, PairsBoardVisualization, ProgressionVisualizer
 from . import core
 from .engine import Engine
 from .perturbation_handler import RemovalPerturber
@@ -13,5 +13,6 @@ __all__ = [
     "RemovalPerturber",
     "SarfaBaseline",
     "SarfaComputeResult",
-    "get_all_pos"
+    "get_all_pos",
+    "ProgressionVisualizer"
 ]

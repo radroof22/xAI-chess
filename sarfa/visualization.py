@@ -4,7 +4,9 @@ import cv2
 from .utils import pos_to_index_mapping
 import svg_custom.svg_custom as svg_custom 
 import cairosvg
-
+import matplotlib.pyplot as plt
+import chess
+from PIL import Image as PILImage
 
 class BoardVisualization():
     DRAWING_FILE = "svg_custom/board"
@@ -274,3 +276,29 @@ class PairsBoardVisualization():
         self._draw_saliency_boxes(heatmap)
 
         return f"{self.DRAWING_FILE}.png"
+
+class ProgressionVisualizer:
+    def __init__(self, saliency_timestep, moves_taken: list[chess.Move]):
+        self.boards = [st[1] for st in saliency_timestep]
+        self.saliency_map = [st[0] for st in saliency_timestep]
+        self.moves_taken = moves_taken
+        self.depth = len(moves_taken)
+
+    def show(self) -> plt.Figure:
+        # Create a grid of subplots (1 row, `depth` columns)
+        fig, axes = plt.subplots(1, self.depth, figsize=(5 * self.depth, 5))  # Adjust the size as needed
+
+        # Loop through indices 1 through `depth`
+        for step in range(self.depth):  # 1 through `depth` inclusive
+            board_visualization = BoardVisualization(self.boards[step])
+            path = board_visualization.show_heatmap(self.saliency_map[step], self.moves_taken[step])
+            img = PILImage.open(path)
+            
+            # Display the image in the corresponding subplot
+            axes[step].imshow(img)
+            axes[step].axis('off')  # Turn off axis
+            axes[step].set_title(f"Timestep {step}", fontsize=12)
+
+        # Adjust layout and show the grid
+        plt.tight_layout()
+        return fig
