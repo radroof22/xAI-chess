@@ -26,5 +26,5 @@ You will need to install a conda environment with all the required packages. Ple
 
 - For experiment 1, please run sarfa_empty_spaces.ipynb notebook
 - For experiment 2, please run sarfa_offense_defense.ipynb notebook
-- for experiment 3, please run the sarfa_baseline.ipynb notebook and **add notebook name for sequential**
+- for experiment 3, please run the sarfa_baseline.ipynb notebook and sequential_sarfa.ipynb
 - for experiment 4, please run the pairs_groups.ipynb notebook
