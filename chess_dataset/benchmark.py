@@ -9,7 +9,7 @@ import chess
 
 from .dataset import load_dataset
 
-class SafraBenchmark:
+class SarfaBenchmark:
 
     def __init__(self, saliency_algorithm: Callable[[str], Dict[str, int]]):
         self.dataset = load_dataset()

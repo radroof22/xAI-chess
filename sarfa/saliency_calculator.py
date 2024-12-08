@@ -73,10 +73,7 @@ class SarfaBaseline:
         # overrride optimal action if provided
         if (action != None):
             optimal_move_original_board = str(action)
-        # print(common_actions)
-        # print(optimal_move_original_board)
-        # print(q_vals_original_board_common)
-        # print(q_vals_perturbed_board)
+        
         saliency, dP, _, _, _, _ = computeSaliencyUsingSarfa(
             optimal_move_original_board, 
             q_vals_original_board_common, q_vals_perturbed_board,

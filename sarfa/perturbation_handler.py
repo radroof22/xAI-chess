@@ -20,6 +20,9 @@ class Perturber:
                 yield perturbed_board, position_str
         
 class RemovalPerturber(Perturber):
+    """
+    Removes piece from position where a piece currently exists
+    """
         
     def perturb_position(self, position_str: str) -> chess.Board | None:
         position = get_pos_obj(position_str)
@@ -36,6 +39,9 @@ class RemovalPerturber(Perturber):
         
 
 class AddPerturber(Perturber):
+    """
+    Adds a pawn to a empty space on the board where no piece already exists.
+    """
         
     def perturb_position(self, position_str: str) -> chess.Board | None:
         position = get_pos_obj(position_str)
