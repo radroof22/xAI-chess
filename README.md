@@ -17,10 +17,12 @@ __Authors__: Rithesh Rajasekar, Rohan Mehta, Arsh Singhal, Rishi Ramen
 
 In order to replicate all the experiments in this repository, you will only need access to CPU resources.
 You will need to install a conda environment with all the required packages. Please run the following commands below for the full set up:
-1. cd {parent}/xAI-chess
-2. conda create --name chess_env python=3.9
-3. conda activate chess_env
-4. pip install -r requirements.txt
+```bash
+cd {parent}/xAI-chess
+conda create --name chess_env python=3.9
+conda activate chess_env
+pip install -r requirements.txt
+```
 
 # Run Experiments
 
