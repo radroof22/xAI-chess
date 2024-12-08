@@ -35,4 +35,4 @@ pip install -r requirements.txt
 - `chess_dataset/` contains the dataset itself (`chess_saliency_dataset_v1.json`) and code for loading the dataset and running benchmarks
 - `pair_results/` contains experimental qualitative results for the PaIRS algorithm
 - `sarfa/` contains classes and methods for the baseline SARFA implementation. It also includes visualization functions for understanding the output
-- `test_fens/` contains curated dataset of FENS (special chess notation for describing a board) used for testing experiments 1,2, and 4
+- `test_fens/` contains curated dataset of FENS (special chess notation for describing a board) used for testing experiments 1,2, and 4. The FEN you want to test can be chosen by its index in the notebooks.
