@@ -6,7 +6,7 @@ This repository consists of several experiments to explore the realm of explaina
 **(3)** Use a novel technique called Sequential SARFA, which uses temporal perturbations on top of naive SARFA, to improve performance.<br>
 **(4)** A novel framework called Pairwise Importance for RL Sensitivity or PaIRS for highlighting important groups of features to explain RL decision-making and potential strategies.<br>
 
-Please look at our paper for more details: __Add Link to Paper__
+Please look at our paper for more details: [https://github.com/radroof22/xAI-chess/blob/main/SARFA%2BExtending%20Explainability%20in%20Chess.pdf](https://github.com/radroof22/xAI-chess/blob/main/SARFA%2BExtending%20Explainability%20in%20Chess.pdf)
 
 Additionally, we would like to give credits to the authors of the SARFA paper as many of our experiments use SARFA as a basis for further developments and improvements. Furthermore, we would like to give the authors of SARFA credit for both the chess_saliency_dataset_v1.json dataset file and core.py file which contains the default implementation of SARFA adapted from the SARFA repository. <br>
 [SARFA repository](https://github.com/nikaashpuri/sarfa-saliency/tree/master)
