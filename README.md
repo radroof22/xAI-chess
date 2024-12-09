@@ -11,7 +11,7 @@ Please look at our [paper](https://github.com/radroof22/xAI-chess/blob/main/SARF
 Additionally, we would like to give credits to the authors of the SARFA paper as many of our experiments use SARFA as a basis for further developments and improvements. Furthermore, we would like to give the authors of SARFA credit for both the chess_saliency_dataset_v1.json dataset file and core.py file which contains the default implementation of SARFA adapted from the SARFA repository. <br>
 [SARFA repository](https://github.com/nikaashpuri/sarfa-saliency/tree/master)
 
-__Authors__: Rithesh Rajasekar, Rohan Mehta, Arsh Singhal, Rishi Ramen
+__Authors__: Rithesh Rajasekar, Rohan Mehta, Arsh Singhal, Rishi Raman
 
 # Setup
 
